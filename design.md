@@ -8,6 +8,10 @@ region based neural nets works as follows:
 
 3. category-specific linear SVMs classify the feature vectors
 
+Fast RNN improves the above approach by replacing the CNN and SVM pipeline for R-CNN or RNN.
+
+Object proposals are still necessary to for untrained NN (hence selective search).
+
 ## Selective Search [1]
 
 Uijlings and colleges make the following considerations when designing selective search:
@@ -21,10 +25,26 @@ Uijlings and colleges make the following considerations when designing selective
 The specific segmentation method, by J. Carreira and C. Sminchisescu [2], is beyond the scope of this project, 
 so for now, segment by applying canny edge detection then flooding.
 
-## CNN
+1. Hierarchically group segments
 
 
-## SVM
+    R = {r1, ..., rn}
+    S = null
+    for (adjacent regions: {ri, rj}
+        s(ri, rj) = similarity between ri and rj
+        if threshold < s(ri, rj)
+            S = S + s(ri, rj)
+    
+    while (S is not empty)
+        s(ri, rj) = max(S)
+        rt = ri merge rj
+        remove ri and rj similarities in S
+        add similarities for rt and neighbors in S
+        R = R + rt - ri - rj
+
+2. 
+
+## Fast RNN
 
 
 ## Citation

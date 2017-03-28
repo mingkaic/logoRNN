@@ -12,17 +12,24 @@
 namespace lrnn
 {
 
+struct edge_params
+{
+	double sigma = sqrt(2);
+	size_t kernel_size = 0;
+	double lo_thres = -1;
+	double hi_thres = -1;
+};
+
 /// adaptive threshold using otsu + binary thresholding method
 std::pair<double,double> athres (const cv::Mat& in);
 
 /// canny edge operator
-void canny_thresh (const cv::Mat& in, cv::Mat& out,
-	size_t kernel_size, double sigma,
-	double lo_thres, double hi_thres);
+void canny_thresh (const cv::Mat& in, cv::Mat& out, const edge_params& eparams);
 
 /// segment with edges using watershed
 /// ignore regions of pixels less than min_size
 /// return the number of segments
+/// out is a flat matrix with values denoting a segment label from 1 to number of segments
 size_t watershed (const cv::Mat& in, cv::Mat& out,
 	const cv::Mat& edge_in, size_t min_size);
 

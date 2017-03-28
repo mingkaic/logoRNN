@@ -21,14 +21,22 @@ std::pair<double,double> athres (const cv::Mat& in)
 }
 
 void canny_thresh (const cv::Mat& in, cv::Mat& out,
-	size_t kernel_size, double sigma,
-	double lo_thres, double hi_thres)
+	const edge_params& eparams)
 {
+	double lo_thres = eparams.lo_thres;
+	double hi_thres = eparams.hi_thres;
+	if (lo_thres < 0 || hi_thres < 0)
+	{
+		std::pair<double,double> lohi = athres(in);
+		lo_thres = lohi.first;
+		hi_thres = lohi.second;
+	}
+
 	cv::Mat src_gray, canny_in;
 	cv::cvtColor(in, src_gray, CV_BGR2GRAY);
 
-	cv::GaussianBlur(src_gray, canny_in, cv::Size(3,3), sigma);
-	cv::Canny(canny_in, out, lo_thres, hi_thres, kernel_size);
+	cv::GaussianBlur(src_gray, canny_in, cv::Size(3,3), eparams.sigma);
+	cv::Canny(canny_in, out, lo_thres, hi_thres, eparams.kernel_size);
 }
 
 size_t watershed (const cv::Mat& in, cv::Mat& out,

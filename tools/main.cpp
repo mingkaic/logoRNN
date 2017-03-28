@@ -10,11 +10,8 @@ using namespace cv;
 
 Mat src;
 
-//int ratio = 3;
-//int lowThreshold;
-//const int max_lowThreshold = 100;
-
-int kernel_size = 3;
+lrnn::edge_params eparams;
+const int kernel_size = 3;
 const int min_size = 100;
 const char* window_name = "Edge Map";
 
@@ -23,11 +20,11 @@ const int max_edge = 30;
 
 void segment (int, void*)
 {
-	std::pair<double,double> lohi = lrnn::athres(src);
+	eparams.sigma = edge * sqrt(2);
 
 	// edge detect
 	cv::Mat edges;
-	lrnn::canny_thresh(src, edges, kernel_size, edge * sqrt(2), lohi.first, lohi.second);
+	lrnn::canny_thresh(src, edges, eparams);
 
 	// watershed
 	Mat markers = src;
@@ -38,7 +35,6 @@ void segment (int, void*)
 	lrnn::color_label(src, wshed, markers, compCount);
 	imshow(window_name, wshed);
 }
-
 
 int main(int argc, char** argv )
 {
@@ -57,6 +53,13 @@ int main(int argc, char** argv )
 		std::cout << "Data not found at " << argv[1] << std::endl;
 		return -1;
 	}
+
+	// adaptive threshold
+	std::pair<double,double> lohi = lrnn::athres(src);
+	eparams.kernel_size = kernel_size;
+	eparams.lo_thres = lohi.first;
+	eparams.hi_thres = lohi.second;
+
 	// Create a window
 	namedWindow( window_name, CV_WINDOW_AUTOSIZE );
 	// Create a Trackbar for user to enter threshold
