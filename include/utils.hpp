@@ -13,10 +13,6 @@ namespace lrnn
 /// change pure white to black
 void blackenBG (cv::Mat& I);
 
-/// canny edge operator
-void canny_thresh (cv::Mat& out, const cv::Mat& in,
-	size_t kernel_size, int low_threshold, double ratio);
-
 }
 
 #endif // LOGORNN_UTILS_HPP

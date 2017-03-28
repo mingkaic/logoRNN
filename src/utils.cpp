@@ -25,18 +25,6 @@ void blackenBG (cv::Mat& I)
 	}
 }
 
-void canny_thresh (cv::Mat& out, const cv::Mat& in,
-	size_t kernel_size,
-	int low_threshold,
-	double ratio)
-{
-	cv::Mat src_gray;
-
-	cv::cvtColor(in, src_gray, CV_BGR2GRAY );
-	cv::GaussianBlur(src_gray, out, cv::Size(3,3), sqrt(2));
-	cv::Canny(out, out, low_threshold, low_threshold*ratio, kernel_size);
-}
-
 }
 
 #endif

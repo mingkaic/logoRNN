@@ -8,53 +8,35 @@
 
 using namespace cv;
 
-Mat src, dst;
-int lowThreshold;
-int ratio = 3;
-int kernel_size = 3;
+Mat src;
 
+//int ratio = 3;
+//int lowThreshold;
+//const int max_lowThreshold = 100;
+
+int kernel_size = 3;
 const int min_size = 100;
 const char* window_name = "Edge Map";
 
-const int max_lowThreshold = 100;
+int edge = 0;
+const int max_edge = 30;
 
-void watershed (int, void*)
+void segment (int, void*)
 {
+	std::pair<double,double> lohi = lrnn::athres(src);
+
+	// edge detect
+	cv::Mat edges;
+	lrnn::canny_thresh(src, edges, kernel_size, edge * sqrt(2), lohi.first, lohi.second);
+
+	// watershed
 	Mat markers = src;
-	size_t compCount = lrnn::segment(markers, src, min_size, kernel_size, lowThreshold, ratio);
+	size_t compCount = lrnn::watershed(src, markers, edges, min_size);
 
-	if( compCount == 0 )
-		return;
-	vector<Vec3b> colorTab;
-	for(int i = 0; i < compCount; i++)
-	{
-		int b = theRNG().uniform(0, 255);
-		int g = theRNG().uniform(0, 255);
-		int r = theRNG().uniform(0, 255);
-		colorTab.push_back(Vec3b((uchar)b, (uchar)g, (uchar)r));
-	}
-
-	Mat wshed(markers.size(), CV_8UC3);
-	// paint the watershed image
-	for(int i = 0; i < markers.rows; i++)
-	{
-		for(int j = 0; j < markers.cols; j++)
-		{
-			int index = markers.at<int>(i,j);
-			if( index == -1 )
-				wshed.at<Vec3b>(i,j) = Vec3b(255,255,255);
-			else if( index <= 0 || index > compCount )
-				wshed.at<Vec3b>(i,j) = Vec3b(0,0,0);
-			else
-				wshed.at<Vec3b>(i,j) = colorTab[index - 1];
-		}
-	}
-	cv::Mat src_gray;
-	cv::Mat temp;
-	cvtColor(src, temp, COLOR_BGR2GRAY);
-	cvtColor(temp, src_gray, COLOR_GRAY2BGR);
-	wshed = wshed*0.5 + src_gray*0.5;
-	imshow( window_name, wshed );
+	// display watershed image
+	Mat wshed;
+	lrnn::color_label(src, wshed, markers, compCount);
+	imshow(window_name, wshed);
 }
 
 
@@ -78,9 +60,9 @@ int main(int argc, char** argv )
 	// Create a window
 	namedWindow( window_name, CV_WINDOW_AUTOSIZE );
 	// Create a Trackbar for user to enter threshold
-	createTrackbar( "Min Threshold:", window_name, &lowThreshold, max_lowThreshold, watershed );
+	createTrackbar( "Sigma ( *sqrt(2) ):", window_name, &edge, max_edge, segment );
 	// Show the image
-	watershed(0, 0);
+	segment(0, 0);
 	// Wait until user exit program by pressing a key
 	waitKey(0);
 
