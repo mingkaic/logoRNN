@@ -1,6 +1,8 @@
 # logoRNN
 CMPT 414- CV Modeling Term Project
 
+Our project focuses on implementing region based CNN for logo detection
+
 ## How to Merge
 - git clone https://github.com/mingkaic/logoRNN.git
 - copy over existing files
