@@ -39,8 +39,8 @@ void canny_thresh (const cv::Mat& in, cv::Mat& out,
 	cv::Canny(canny_in, out, lo_thres, hi_thres, eparams.kernel_size);
 }
 
-size_t watershed (const cv::Mat& in, cv::Mat& out,
-	const cv::Mat& edge_in, size_t min_size)
+size_t watershed (const cv::Mat& in, const cv::Mat& edge_in,
+	cv::Mat& out, size_t min_size)
 {
 	// Find contours
 	std::vector<std::vector<cv::Point> > contours;
@@ -53,7 +53,7 @@ size_t watershed (const cv::Mat& in, cv::Mat& out,
 	out = cv::Scalar::all(0);
 
 	size_t compCount = 0;
-	for(int idx = 0; idx >= 0;
+	for (int idx = 0; idx >= 0;
 		idx = hierarchy[idx][0], compCount++ )
 	{
 		if (fabs(cv::contourArea(contours[compCount])) < min_size)
@@ -67,16 +67,16 @@ size_t watershed (const cv::Mat& in, cv::Mat& out,
 }
 
 
-void color_label (const cv::Mat& in, cv::Mat& out,
-	const cv::Mat& comp_in, size_t n_components)
+void color_label (const cv::Mat& in, const cv::Mat& comp_in,
+	cv::Mat& out, size_t n_components)
 {
-	if(n_components == 0)
+	if (n_components == 0)
 	{
 		return;
 	}
 	// generate colors
 	std::vector<cv::Vec3b> color_palette;
-	for(int i = 0; i < n_components; i++)
+	for (int i = 0; i < n_components; i++)
 	{
 		int b = cv::theRNG().uniform(0, 255);
 		int g = cv::theRNG().uniform(0, 255);
@@ -86,16 +86,16 @@ void color_label (const cv::Mat& in, cv::Mat& out,
 
 	// paint the watershed image
 	out = cv::Mat(comp_in.size(), CV_8UC3);
-	for(int i = 0; i < comp_in.rows; i++)
+	for (int i = 0; i < comp_in.rows; i++)
 	{
-		for(int j = 0; j < comp_in.cols; j++)
+		for (int j = 0; j < comp_in.cols; j++)
 		{
 			int index = comp_in.at<int>(i,j);
-			if(index == -1)
+			if (index == -1)
 			{
 				out.at<cv::Vec3b>(i,j) = cv::Vec3b(255,255,255);
 			}
-			else if(index <= 0 || index > n_components)
+			else if (index <= 0 || index > n_components)
 			{
 				out.at<cv::Vec3b>(i,j) = cv::Vec3b(0,0,0);
 			}

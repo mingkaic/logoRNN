@@ -11,9 +11,9 @@ namespace lrnn
 
 void blackenBG (cv::Mat& I)
 {
-	for( int x = 0; x < I.rows; x++ )
+	for (int x = 0; x < I.rows; x++)
 	{
-		for( int y = 0; y < I.cols; y++ )
+		for (int y = 0; y < I.cols; y++)
 		{
 			if (I.at<cv::Vec3b>(x, y) == cv::Vec3b(255,255,255))
 			{

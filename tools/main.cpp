@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "segment.hpp"
+#include "selectsearch.hpp"
 
 using namespace cv;
 
@@ -28,15 +29,31 @@ void segment (int, void*)
 
 	// watershed
 	Mat markers = src;
-	size_t compCount = lrnn::watershed(src, markers, edges, min_size);
+	size_t compCount = lrnn::watershed(src, edges, markers, min_size);
+
+	// model the regions by adjacency graph
+	Mat adj_mat;
+	lrnn::getAdjacencyMatrix(markers, adj_mat, compCount);
+
+	// perform hierarchy grouping
+	Mat grouped_mat;
+	lrnn::h_grouping(adj_mat, grouped_mat,
+	[](int i, int j) -> double
+	{
+		return 0;
+	},
+	[](int i, int j) -> int
+	{
+		return 0;
+	});
 
 	// display watershed image
 	Mat wshed;
-	lrnn::color_label(src, wshed, markers, compCount);
+	lrnn::color_label(src, markers, wshed, compCount);
 	imshow(window_name, wshed);
 }
 
-int main(int argc, char** argv )
+int main (int argc, char** argv )
 {
 	if (argc < 2)
 	{
@@ -61,7 +78,7 @@ int main(int argc, char** argv )
 	eparams.hi_thres = lohi.second;
 
 	// Create a window
-	namedWindow( window_name, CV_WINDOW_AUTOSIZE );
+	namedWindow(window_name, CV_WINDOW_AUTOSIZE);
 	// Create a Trackbar for user to enter threshold
 	createTrackbar( "Sigma ( *sqrt(2) ):", window_name, &edge, max_edge, segment );
 	// Show the image

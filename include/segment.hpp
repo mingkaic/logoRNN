@@ -30,14 +30,14 @@ void canny_thresh (const cv::Mat& in, cv::Mat& out, const edge_params& eparams);
 /// ignore regions of pixels less than min_size
 /// return the number of segments
 /// out is a flat matrix with values denoting a segment label from 1 to number of segments
-size_t watershed (const cv::Mat& in, cv::Mat& out,
-	const cv::Mat& edge_in, size_t min_size);
+size_t watershed (const cv::Mat& in, const cv::Mat& edge_in,
+	cv::Mat& out, size_t min_size);
 
 /// label components in comp_in with colors
 /// transluciently add regions to original source image in
 /// through resulting image out
-void color_label (const cv::Mat& in, cv::Mat& out,
-	const cv::Mat& comp_in, size_t n_components);
+void color_label (const cv::Mat& in, const cv::Mat& comp_in,
+	cv::Mat& out, size_t n_components);
 
 }
 

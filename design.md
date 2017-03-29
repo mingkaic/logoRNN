@@ -12,11 +12,13 @@ Fast RNN improves the above approach by replacing the CNN and SVM pipeline for R
 
 Object proposals are still necessary to for untrained NN (hence selective search).
 
+Object proposals are regions within the original image that has a high chance of containing objects
+
 ## Selective Search [1]
 
 Uijlings and colleges make the following considerations when designing selective search:
 
-- Capture all scales (differing sigma in smoothing operators to capture regions of different details, similar to gaussian pyramid)
+- Capture all scales (scale of similarity captured in hierarchical group segments)
 
 - Diversify region identification (differing features)
 
@@ -42,10 +44,20 @@ so for now, segment by applying canny edge detection then flooding.
         add similarities for rt and neighbors in S
         R = R + rt - ri - rj
 
-2. 
+2. Consider different similarity metrics
+
+ - color : s_color(ri, rj) = sum_k=1:n(min(ci_k, cj_k))
+ 
+ - texture : use texture histogram of nbins = 10, sigma = 1 (equation same as color)
+ 
+ - size : merge small regions early, s+size(ri,rj) = 1-(size(ri) + size(rj))/size(im)
+ 
+ - fill : whether the region merging fills gaps given a bounding box BBij around ri and rj, 
+ fill(ri, rj) = 1-(size(BBij) - size(ri) - size(rj)) / size(im)
 
 ## Fast RNN
 
+Fast RNN takes the entire image with a set of object proposals
 
 ## Citation
 
@@ -55,3 +67,5 @@ Smeulders. Selective search for object recognition. IJCV, 2013.
 [2] J. Carreira and C. Sminchisescu. Constrained parametric mincuts
 for automatic object segmentation. In CVPR, 2010. 2, 3,
 8, 9, 10, 11, 13
+
+[3] 
