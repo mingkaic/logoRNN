@@ -88,7 +88,7 @@ void h_grouping (const cv::Mat& adjMat,
 	std::function<double(int,int)> compare,
 	std::function<int(int,int)> merge)
 {
-	auto cmp =
+	std::function<bool(similarity&,similarity&)> cmp =
 		[](similarity& left, similarity& right)
 		{
 			return left.score < right.score;
@@ -96,7 +96,8 @@ void h_grouping (const cv::Mat& adjMat,
 	// store all neighbors of each region
 	std::unordered_map<int,std::vector<int> > adjs;
 	// max-min priority queue of each region pair and their similarity score
-	std::priority_queue<similarity, std::vector<similarity>, decltype(cmp)> S(cmp);
+	std::priority_queue<similarity, std::vector<similarity>,
+		std::function<bool(similarity&,similarity&)>> S(cmp);
 	for (size_t i = 1; i < adjMat.rows; i++)
 	{
 		for (size_t j = 0; j < i; j++)

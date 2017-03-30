@@ -41,7 +41,54 @@ public:
 	};
 
 	region_manager (const cv::Mat& src, const cv::Mat& marker, size_t nMarks) :
-		src_(src), marker_(marker), nMarks(nMarks) {}
+		src_(src), marker_(marker), nMarks(nMarks)
+	{
+		std::function<void(const cv::Mat&,cv::Mat&)> calc_grad =
+		[](const cv::Mat& in, cv::Mat& out)
+			{
+				int scale = 1;
+				int delta = 0;
+				int ddepth = CV_16S;
+				cv::Mat grad_x, grad_y;
+				cv::Mat abs_grad_x, abs_grad_y;
+
+				cv::Sobel(in, grad_x, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT);
+				cv::Sobel(in, grad_y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT);
+
+				for (int i = 0; i < in.rows; i++)
+				{
+					for (int j = 0; j < in.cols; j++)
+					{
+						double gx = grad_x.at<int>(i, j);
+						double gy = grad_y.at<int>(i, j);
+						out.at<double>(i, j) = atan2(gy, gx);
+					}
+				}
+			};
+
+		size_t nchannels = src.channels();
+		for (size_t i = 0; i < nchannels; i++)
+		{
+			grad_.push_back(cv::Mat::zeros(cv::Size(src.rows, src.cols), cv::DataType<double>::type));
+		}
+
+		// get gradient
+		if (nchannels > 1)
+		{
+			std::vector<cv::Mat> msplit;
+			// split the channels
+			cv::split(src, msplit);
+			// apply kernel to each channel
+			for (int i = 0; i < 3; i++)
+			{
+				calc_grad(msplit[i], grad_[i]);
+			}
+		}
+		else
+		{
+			calc_grad(src, grad_[0]);
+		}
+	}
 
 	~region_manager (void)
 	{
@@ -74,13 +121,29 @@ public:
 				info->color.bin[bucket + 25 * k]++;
 			}
 		};
+		std::function<void(int,int)> texthist = [&nchannels, info, this](int i, int j)
+		{
+			cv::Vec3b c = src_.at<cv::Vec3b>(i, j);
+			for (int k = 0; k < nchannels; k++)
+			{
+				int gidx = grad_[k].at<double>(i, j) * 4 / M_PI + 4;
+				int coloridx = c[k] * 10 / 255;
+				info->texture.bin[gidx + 8 * coloridx + 80 * k]++;
+			}
+		};
 		if (nchannels == 1)
 		{
-			colorhist = [&nchannels, info, this](int i, int j)
+			colorhist = [info, this](int i, int j)
 			{
 				int c = src_.at<char>(i, j);
 				int bucket = c * 25 / 255;
 				info->color.bin[bucket]++;
+			};
+			texthist = [info, this](int i, int j)
+			{
+				int gidx = grad_[0].at<double>(i, j) * 4 / M_PI + 4;
+				int coloridx = src_.at<char>(i, j);
+				info->texture.bin[gidx + 8 * coloridx]++;
 			};
 		}
 		for (int i = 0; i < marker_.rows; i++)
@@ -93,7 +156,7 @@ public:
 					// color info
 					colorhist(i, j);
 					// texture info
-					// todo: collect texture info
+					texthist(i, j);
 					// size info
 					info->npixels++;
 					// corner info
@@ -150,7 +213,13 @@ public:
 		info->lr = {hii, hij};
 		// merge size info
 		size_t tpixels = info->npixels = infoI.npixels + infoJ.npixels;
-
+		// merge texture info
+		for (int k = 0; k < info->texture.nbins; k++)
+		{
+			info->texture.bin[k] = (
+				infoI.npixels * infoI.texture.bin[k] +
+				infoJ.npixels * infoJ.texture.bin[k]) / tpixels;
+		}
 		// merge color info
 		for (int k = 0; k < info->color.nbins; k++)
 		{
@@ -172,6 +241,7 @@ private:
 	std::unordered_map<int, region_info*> cache_;
 
 	size_t nMarks;
+	std::vector<cv::Mat> grad_;
 	const cv::Mat& src_;
 	const cv::Mat& marker_;
 };
