@@ -68,7 +68,7 @@ struct similarity
 	int regionj;
 };
 
-void h_grouping (const cv::Mat& adjMat, cv::Mat& grouped,
+void h_grouping (const cv::Mat& adjMat,
 	std::function<double(int,int)> compare,
 	std::function<int(int,int)> merge)
 {

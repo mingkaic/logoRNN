@@ -55,6 +55,17 @@ so for now, segment by applying canny edge detection then flooding.
  - fill : whether the region merging fills gaps given a bounding box BBij around ri and rj, 
  fill(ri, rj) = 1-(size(BBij) - size(ri) - size(rj)) / size(im)
 
+3. Rank objects from the top of the hierarchy tree downward (where top denotes the entire image)
+
+
+    H = {r1, r2, ... rn}
+    for r=1:n
+        rank[ri] = RAND * i;
+
+    sort H for ascending rank value (rank 1 is before rank 2)
+
+Take top k objects as object hypothesis
+
 ## Fast RNN
 
 Fast RNN takes the entire image with a set of object proposals
