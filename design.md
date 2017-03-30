@@ -29,7 +29,7 @@ so for now, segment by applying canny edge detection then flooding.
 
 1. Hierarchically group segments
 
-
+```
     R = {r1, ..., rn}
     S = null
     for (adjacent regions: {ri, rj}
@@ -43,6 +43,7 @@ so for now, segment by applying canny edge detection then flooding.
         remove ri and rj similarities in S
         add similarities for rt and neighbors in S
         R = R + rt - ri - rj
+```
 
 2. Consider different similarity metrics
 
@@ -57,12 +58,13 @@ so for now, segment by applying canny edge detection then flooding.
 
 3. Rank objects from the top of the hierarchy tree downward (where top denotes the entire image)
 
-
+```
     H = {r1, r2, ... rn}
     for r=1:n
         rank[ri] = RAND * i;
 
     sort H for ascending rank value // rank 1 is before rank 2
+```
 
 Take top k objects as object hypothesis
 
