@@ -65,6 +65,24 @@ public:
 		int maxj = 0;
 		int nchannels = src_.channels();
 		region_info* info = new region_info(nchannels);
+		std::function<void(int,int)> colorhist = [&nchannels, info, this](int i, int j)
+		{
+			cv::Vec3b c = src_.at<cv::Vec3b>(i, j);
+			for (int k = 0; k < nchannels; k++)
+			{
+				int bucket = c[k] * 25 / 255;
+				info->color.bin[bucket + 25 * k]++;
+			}
+		};
+		if (nchannels == 1)
+		{
+			colorhist = [&nchannels, info, this](int i, int j)
+			{
+				int c = src_.at<char>(i, j);
+				int bucket = c * 25 / 255;
+				info->color.bin[bucket]++;
+			};
+		}
 		for (int i = 0; i < marker_.rows; i++)
 		{
 			for (int j = 0; j < marker_.cols; j++)
@@ -73,12 +91,7 @@ public:
 				if (region == index)
 				{
 					// color info
-					for (int k = 0; k < nchannels; k++)
-					{
-						int c = src_.at<int>(i, j);
-						int bucket = c * 25 / 255;
-						info->color.bin[bucket + 25 * k]++;
-					}
+					colorhist(i, j);
 					// texture info
 					// todo: collect texture info
 					// size info
@@ -148,9 +161,9 @@ public:
 		return nMarks;
 	}
 
-	std::vector<int> get_subregions (int region)
+	std::pair<coord,coord> get_box (int region)
 	{
-		return cache_[region]->subregions;
+		return {cache_[region]->ul, cache_[region]->lr};
 	}
 
 	std::vector<int> hierarchy;

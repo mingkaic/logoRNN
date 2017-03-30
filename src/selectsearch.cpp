@@ -16,44 +16,60 @@ void getAdjacencyMatrix (const cv::Mat& markers, cv::Mat& res, size_t compCount)
 	res = cv::Mat(compCount, compCount, CV_32S, cv::Scalar(0));
 
 	// Scan the labeled image
-	for (int i = 1; i < markers.rows-1; i++)
+	for (int i = 0; i < markers.rows; i++)
 	{
-		for (int j = 1; j < markers.cols-1; j++)
+		int left = -1;
+		int right = -1;
+		for (int j = 0; j < markers.cols; j++)
 		{
 			// Get the label of the current pixel and the ones of its neighbors
-			int k 		= markers.at<int>(i, j);
-			int kleft 	= markers.at<int>(i-1, j);
-			int kright 	= markers.at<int>(i+1, j);
-			int kup 	= markers.at<int>(i, j-1);
-			int kdown 	= markers.at<int>(i, j+1);
-
-			if (k <= 0 || k > compCount ||
-				kleft <= 0 || kleft > compCount ||
-				kright <= 0 || kright > compCount ||
-				kup <= 0 || kup > compCount ||
-				kdown <= 0 || kdown > compCount)
+			int index = markers.at<int>(i, j);
+			if (index <= 0 || index > compCount)
 			{
 				continue;
 			}
-			if (k != kleft)
+			if (left <= 0 || right <= 0)
 			{
-				res.at<int>(k-1, kleft-1) = 1;
-				res.at<int>(kleft-1, k-1) = 1;
+				left = index;
+				right = index;
+				continue;
 			}
-			if (k != kright)
+			if (right != index)
 			{
-				res.at<int>(k-1, kright-1) = 1;
-				res.at<int>(kright-1, k-1) = 1;
+				res.at<int>(left-1, right-1) = 1;
+				res.at<int>(right-1, left-1) = 1;
+
+				left = right;
+				right = index;
 			}
-			if (k != kup)
+		}
+	}
+
+	for (int j = 0; j < markers.cols; j++)
+	{
+		int up = -1;
+		int down = -1;
+		for (int i = 0; i < markers.rows; i++)
+		{
+			// Get the label of the current pixel and the ones of its neighbors
+			int index = markers.at<int>(i, j);
+			if (index <= 0 || index > compCount)
 			{
-				res.at<int>(k-1, kup-1) = 1;
-				res.at<int>(kup-1, k-1) = 1;
+				continue;
 			}
-			if (k != kdown)
+			if (up <= 0 || down <= 0)
 			{
-				res.at<int>(k-1, kdown-1) = 1;
-				res.at<int>(kdown-1, k-1) = 1;
+				up = index;
+				down = index;
+				continue;
+			}
+			if (down != index)
+			{
+				res.at<int>(up-1, down-1) = 1;
+				res.at<int>(down-1, up-1) = 1;
+
+				up = down;
+				down = index;
 			}
 		}
 	}
@@ -87,10 +103,10 @@ void h_grouping (const cv::Mat& adjMat,
 		{
 			if (adjMat.at<int>(i, j))
 			{
-				double score = compare(i, j);
-				similarity sij(score, i, j);
+				double score = compare(i+1, j+1);
+				similarity sij(score, i+1, j+1);
 				S.push(sij);
-				adjs[i].push_back(j);
+				adjs[i+1].push_back(j+1);
 			}
 		}
 	}

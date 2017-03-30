@@ -4,6 +4,7 @@
 
 #include <random>
 #include <iostream>
+#include <algorithm>
 
 #include "segment.hpp"
 #include "selectsearch.hpp"
@@ -11,6 +12,7 @@
 using namespace cv;
 
 Mat src;
+RNG rng(12345);
 
 lrnn::edge_params eparams;
 const int kernel_size = 3;
@@ -38,6 +40,10 @@ void segment (int, void*)
 
 	// cache information on the regions
 	lrnn::region_manager manager(src, markers, compCount);
+
+	// display watershed image
+	Mat wshed;
+	lrnn::color_label(src, markers, wshed, compCount);
 
 	// perform hierarchy grouping
 	lrnn::h_grouping(adj_mat,
@@ -101,14 +107,16 @@ void segment (int, void*)
 	// take half
 	for (size_t i = 0; i < indices.size(); i++)
 	{
+		Scalar color = Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
 		int phantomid = manager.hierarchy[indices[i]];
-		std::vector<int> subs = manager.get_subregions(phantomid);
-		// todo: box super region encompassed by subs
+		const lrnn::region_manager::region_info& info = manager.region_collect(phantomid);
+		std::vector<int> subs = info.subregions;
+		// box super region encompassed by subs
+		Point tl = {info.ul.second, info.ul.first};
+		Point br = {info.lr.second, info.lr.first};
+		rectangle(wshed, tl, br, color, 2, 8, 0 );
 	}
 
-	// display watershed image
-	Mat wshed;
-	lrnn::color_label(src, markers, wshed, compCount);
 	imshow(window_name, wshed);
 }
 
