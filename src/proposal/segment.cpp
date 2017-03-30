@@ -2,7 +2,7 @@
 // Created by Mingkai Chen on 2017-03-27.
 //
 
-#include "segment.hpp"
+#include "proposal/segment.hpp"
 
 #ifdef LOGORNN_SEGMENT_HPP
 
