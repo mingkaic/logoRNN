@@ -62,7 +62,7 @@ so for now, segment by applying canny edge detection then flooding.
     for r=1:n
         rank[ri] = RAND * i;
 
-    sort H for ascending rank value (rank 1 is before rank 2)
+    sort H for ascending rank value // rank 1 is before rank 2
 
 Take top k objects as object hypothesis
 

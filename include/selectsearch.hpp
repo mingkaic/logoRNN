@@ -26,6 +26,20 @@ void h_grouping (const cv::Mat& adjMat,
 class region_manager
 {
 public:
+	struct region_info
+	{
+		region_info (int nchannels) :
+				color(25 * nchannels), texture(80 * nchannels) {}
+
+		histo color;
+		histo texture;
+		size_t npixels = 0;
+		coord ul = {0, 0}; // upper left corner
+		coord lr = {0, 0}; // lower right corner
+
+		std::vector<int> subregions;
+	};
+
 	region_manager (const cv::Mat& src, const cv::Mat& marker, size_t nMarks) :
 		src_(src), marker_(marker), nMarks(nMarks) {}
 
@@ -33,7 +47,7 @@ public:
 	{
 		for (auto it : cache_)
 		{
-			delete it->second;
+			delete it.second;
 		}
 	}
 
@@ -49,7 +63,7 @@ public:
 		int minj = marker_.cols;
 		int maxi = 0;
 		int maxj = 0;
-		int nchannels = src.channels();
+		int nchannels = src_.channels();
 		region_info* info = new region_info(nchannels);
 		for (int i = 0; i < marker_.rows; i++)
 		{
@@ -66,7 +80,7 @@ public:
 						info->color.bin[bucket + 25 * k]++;
 					}
 					// texture info
-
+					// todo: collect texture info
 					// size info
 					info->npixels++;
 					// corner info
@@ -83,14 +97,36 @@ public:
 		return *info;
 	}
 
+	/// create a phantom region in cache and catalog region hierarchy
 	int region_merge (int regioni, int regionj)
 	{
-		int nchannels = src.channels();
+		int nchannels = src_.channels();
 		// construct a virtual region in cache
 		region_info* info = cache_[++nMarks] = new region_info(nchannels);
+		hierarchy.push_back(nMarks);
 
 		const region_info& infoI = region_collect(regioni);
 		const region_info& infoJ = region_collect(regionj);
+
+		if (infoI.subregions.empty())
+		{
+			info->subregions.push_back(regioni);
+		}
+		else
+		{
+			info->subregions.insert(info->subregions.end(),
+				infoI.subregions.begin(), infoI.subregions.end());
+		}
+
+		if (infoJ.subregions.empty())
+		{
+			info->subregions.push_back(regionj);
+		}
+		else
+		{
+			info->subregions.insert(info->subregions.end(),
+				infoJ.subregions.begin(), infoJ.subregions.end());
+		}
 
 		// merge corner info
 		int loi = std::min(infoI.ul.first, infoJ.ul.first);
@@ -103,25 +139,21 @@ public:
 		size_t tpixels = info->npixels = infoI.npixels + infoJ.npixels;
 
 		// merge color info
-		for (int k = 0; k < info.color.nbins; k++)
+		for (int k = 0; k < info->color.nbins; k++)
 		{
 			info->color.bin[k] = (
-				infoI.npixels * infoI->color.bin[k] +
-				infoJ.npixels * infoJ->color.bin[k]) / tpixels;
+				infoI.npixels * infoI.color.bin[k] +
+				infoJ.npixels * infoJ.color.bin[k]) / tpixels;
 		}
+		return nMarks;
 	}
 
-	struct region_info
+	std::vector<int> get_subregions (int region)
 	{
-		region_info (int nchannels) :
-			color(25 * nchannels), texture(80 * nchannels) {}
+		return cache_[region]->subregions;
+	}
 
-		histo color;
-		histo texture;
-		size_t npixels = 0;
-		coord ul = {0, 0}; // upper left corner
-		coord lr = {0, 0}; // lower right corner
-	};
+	std::vector<int> hierarchy;
 
 private:
 	std::unordered_map<int, region_info*> cache_;

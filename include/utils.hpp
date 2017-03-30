@@ -20,7 +20,7 @@ struct histo
 		std::memset(bin, 0, sizeof(double) * nbins);
 	}
 
-	~histo (void) { delete bin[]; }
+	~histo (void) { delete[] bin; }
 
 	double* bin;
 	size_t nbins;

@@ -2,6 +2,7 @@
 // Created by Mingkai Chen on 2017-03-27.
 //
 
+#include <random>
 #include <iostream>
 
 #include "segment.hpp"
@@ -40,7 +41,7 @@ void segment (int, void*)
 
 	// perform hierarchy grouping
 	lrnn::h_grouping(adj_mat,
-	[&manager, &src](int i, int j) -> double
+	[&manager](int i, int j) -> double
 	{
 		const lrnn::region_manager::region_info& infoI =
 			manager.region_collect(i);
@@ -77,11 +78,33 @@ void segment (int, void*)
 	},
 	[&manager](int i, int j) -> int
 	{
-		int phantomid = manager.region_merge(i, j);
-		// todo: actually group + increment hierarchy
-
-		return phantomid;
+		return manager.region_merge(i, j);
 	});
+
+	std::vector<double> scores;
+	std::default_random_engine generator;
+	std::uniform_real_distribution<double> distribution(0.0,1.0);
+	double rank = 1;
+	for (auto rit = manager.hierarchy.rbegin(), ret = manager.hierarchy.rend();
+		rit != ret; rit++)
+	{
+		double score = distribution(generator) * rank;
+		scores.push_back(score);
+		rank++;
+	}
+
+	vector<size_t> indices(scores.size());
+	for (size_t i=0; i < scores.size(); i++) indices[i] = i;
+	std::sort(indices.begin(), indices.end(),
+	[&](size_t x, size_t y) -> bool { return scores[x] < scores[y]; });
+
+	// take half
+	for (size_t i = 0; i < indices.size(); i++)
+	{
+		int phantomid = manager.hierarchy[indices[i]];
+		std::vector<int> subs = manager.get_subregions(phantomid);
+		// todo: box super region encompassed by subs
+	}
 
 	// display watershed image
 	Mat wshed;
