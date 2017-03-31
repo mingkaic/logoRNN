@@ -22,12 +22,19 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 
-set(EXT_PROJECTS_DIR ${PROJECT_SOURCE_DIR}/ext)
-set(LOGO_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-FILE(GLOB_RECURSE LOGO_SRC src/*.cpp)
-FILE(GLOB_RECURSE LOGO_TOOLS tools/*.cpp)
-
+#========= OBJECT PROPOSAL LIBRARY =========#
+set(PROP_PROJ objprop)
+set(LOGO_INCLUDE proposal/include)
+FILE(GLOB_RECURSE LOGO_SRC proposal/src/*.cpp)
 include_directories(${LOGO_INCLUDE} ${EGBIS_INCLUDE_DIRS})
-add_executable(${PROJECT_NAME_STR} ${LOGO_SRC} ${LOGO_TOOLS})
-add_dependencies(${PROJECT_NAME_STR} egbis)
-target_link_libraries(${PROJECT_NAME_STR} ${OpenCV_LIBS} ${EGBIS_LIBS_DIR})
+add_library(${PROP_PROJ} ${LOGO_SRC})
+add_dependencies(${PROP_PROJ} egbis)
+target_link_libraries(${PROP_PROJ} ${OpenCV_LIBS} ${EGBIS_LIBS_DIR})
+
+#========= OBJECT PROPOSAL TEST EXECUTABLE =========#
+set(PROP_TEST optest)
+include_directories(${LOGO_INCLUDE})
+add_executable(${PROP_TEST} tools/test_objprop.cpp)
+target_link_libraries(${PROP_TEST} ${OpenCV_LIBS} ${PROP_PROJ})
+
+#========= FAST R-CNN EXECUTABLE =========#

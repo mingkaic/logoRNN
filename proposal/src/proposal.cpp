@@ -4,7 +4,7 @@
 
 #include "egbis.h"
 
-#include "proposal/proposal.hpp"
+#include "proposal.hpp"
 
 #ifdef LOGORNN_OBJECTPROPOSAL_HPP
 

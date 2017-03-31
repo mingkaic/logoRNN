@@ -7,7 +7,7 @@
 //#include "segment.hpp"
 //#include "selectsearch.hpp"
 
-#include "proposal/proposal.hpp"
+#include "proposal.hpp"
 
 using namespace cv;
 

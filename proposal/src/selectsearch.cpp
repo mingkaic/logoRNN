@@ -2,7 +2,7 @@
 // Created by Mingkai Chen on 2017-03-27.
 //
 
-#include "proposal/selectsearch.hpp"
+#include "selectsearch.hpp"
 
 #ifdef LOGORNN_SELECTSEARCH_HPP
 

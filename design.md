@@ -12,7 +12,7 @@ Fast RNN improves the above approach by replacing the CNN and SVM pipeline for R
 
 Object proposals are still necessary to for untrained NN (hence selective search).
 
-Object proposals are regions within the original image that has a high chance of containing objects
+Object proposals are regions within the original image that has a high probability of containing objects
 
 ## Selective Search [1]
 
@@ -68,9 +68,21 @@ so for now, segment using third party library implementation of graph-based meth
 
 Take top k objects as object hypothesis
 
-## Fast RNN
+## Fast R-CNN [3]
 
-Fast RNN takes the entire image with a set of object proposals
+Fast RNN takes the entire image with a set of object proposals with the a combined effort of image classification and object detection.
+
+With the goal of creating a convolutional feature map, we first feed the image into the conv and max pooling layers.
+
+To get a fixed-length feature vector, feed each object proposal through a region of interest pooling layer (RoI)
+
+The feature vectors are fed into a sequence of fully connected layers leading to 2 layers:
+
+- softmax probability of object in proposal being any of the K+1 objects (1 being none of the K objects)
+
+- 4 values representing refined bounding-box within the proposal
+
+
 
 ## Citation
 
@@ -81,4 +93,4 @@ Smeulders. Selective search for object recognition. IJCV, 2013.
 for automatic object segmentation. In CVPR, 2010. 2, 3,
 8, 9, 10, 11, 13
 
-[3] 
+[3] R. Girshick. Fast R-CNN. International Conference on Computer Vision, 2015
