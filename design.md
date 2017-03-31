@@ -25,7 +25,7 @@ Uijlings and colleges make the following considerations when designing selective
 - Fast: necessary condition for production grade software
 
 The specific segmentation method, by J. Carreira and C. Sminchisescu [2], is beyond the scope of this project, 
-so for now, segment by applying canny edge detection then flooding.
+so for now, segment using third party library implementation of graph-based method.
 
 1. Hierarchically group segments
 

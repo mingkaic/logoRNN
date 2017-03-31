@@ -2,6 +2,8 @@
 // Created by Mingkai Chen on 2017-03-30.
 //
 
+#include "egbis.h"
+
 #include "proposal/proposal.hpp"
 
 #ifdef LOGORNN_OBJECTPROPOSAL_HPP
@@ -9,18 +11,54 @@
 namespace lrnn
 {
 
+static int mark_egdis (const cv::Mat& egdis, cv::Mat& out)
+{
+	out = cv::Mat::zeros(cv::Size(egdis.cols, egdis.rows), cv::DataType<int>::type);
+	std::unordered_map<uint32_t,int> labelmap;
+	int label = 1;
+	for (int i = 0; i < egdis.rows; i++)
+	{
+		for (int j = 0; j < egdis.cols; j++)
+		{
+			cv::Vec3b col = egdis.at<cv::Vec3b>(i, j);
+			uint32_t index = (col[0] << 16) + (col[1] << 8) + col[2];
+			auto it = labelmap.find(index);
+			if (it == labelmap.end())
+			{
+				labelmap.emplace(index, label);
+				out.at<int>(i, j) = label;
+				label++;
+			}
+			else
+			{
+				out.at<int>(i, j) = it->second;
+			}
+		}
+	}
+	return label;
+}
+
 std::vector<BOX> propose_objs (const cv::Mat& src,
 	edge_params eparams,
 	size_t min_size,
 	size_t min_prop)
 {
-	// edge detect
+#ifdef WATERSHED_PROP
+	// use edge detect + watershed
 	cv::Mat edges;
 	lrnn::canny_thresh(src, edges, eparams);
 
 	// watershed
 	cv::Mat markers = src;
 	size_t compCount = lrnn::watershed(src, edges, markers, min_size);
+#else
+	// use efficient graph-based method
+	int nccs;
+	cv::Mat egdis_img = runEgbisOnMat(src, eparams.sigma, 500, 500, &nccs);
+
+	cv::Mat markers;
+	size_t compCount = mark_egdis(egdis_img, markers);
+#endif
 
 	// model the regions by adjacency graph
 	cv::Mat adj_mat;

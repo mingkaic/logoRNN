@@ -27,6 +27,10 @@ void segment (int, void*)
 	eparams.sigma = edge * sqrt(2);
 	Mat dest = src.clone();
 	std::vector<lrnn::BOX> bounds = lrnn::propose_objs(src, eparams, min_size, 10);
+	if (bounds.size() == 0)
+	{
+		bounds.push_back({Point(0, 0), Point(src.cols, src.rows)});
+	}
 	for (lrnn::BOX b : bounds)
 	{
 		cv::Scalar color = cv::Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );

@@ -168,7 +168,7 @@ region_manager::region_manager (const cv::Mat& src, const cv::Mat& marker, size_
 	size_t nchannels = src.channels();
 	for (size_t i = 0; i < nchannels; i++)
 	{
-		grad_.push_back(cv::Mat::zeros(cv::Size(src.rows, src.cols), cv::DataType<double>::type));
+		grad_.push_back(cv::Mat::zeros(cv::Size(src.cols, src.rows), cv::DataType<double>::type));
 	}
 
 	// get gradient
