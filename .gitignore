@@ -29,7 +29,7 @@
 *.app
 
 .*
-cmake*
+cmake-build-*
 bin/
 
 !.gitignore
