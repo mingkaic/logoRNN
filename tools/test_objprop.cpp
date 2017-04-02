@@ -4,9 +4,6 @@
 
 #include <iostream>
 
-//#include "segment.hpp"
-//#include "selectsearch.hpp"
-
 #include "proposal.hpp"
 
 using namespace cv;
@@ -44,7 +41,7 @@ int main (int argc, char** argv )
 {
 	if (argc < 2)
 	{
-		std::cout << "Usage: logoRNN <image/path>" << std::endl;
+		std::cout << "Usage: optest <image/path>" << std::endl;
 		return -1;
 	}
 

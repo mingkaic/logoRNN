@@ -30,19 +30,19 @@ so for now, segment using third party library implementation of graph-based meth
 1. Hierarchically group segments
 
 ```
-    R = {r1, ..., rn}
-    S = null
-    for (adjacent regions: {ri, rj}
-        s(ri, rj) = similarity between ri and rj
-        if threshold < s(ri, rj)
-            S = S + s(ri, rj)
-    
-    while (S is not empty)
-        s(ri, rj) = max(S)
-        rt = ri merge rj
-        remove ri and rj similarities in S
-        add similarities for rt and neighbors in S
-        R = R + rt - ri - rj
+R = {r1, ..., rn}
+S = null
+for (adjacent regions: {ri, rj}
+    s(ri, rj) = similarity between ri and rj
+    if threshold < s(ri, rj)
+        S = S + s(ri, rj)
+
+while (S is not empty)
+    s(ri, rj) = max(S)
+    rt = ri merge rj
+    remove ri and rj similarities in S
+    add similarities for rt and neighbors in S
+    R = R + rt - ri - rj
 ```
 
 2. Consider different similarity metrics
@@ -59,11 +59,11 @@ so for now, segment using third party library implementation of graph-based meth
 3. Rank objects from the top of the hierarchy tree downward (where top denotes the entire image)
 
 ```
-    H = {r1, r2, ... rn}
-    for r=1:n
-        rank[ri] = RAND * i;
+H = {r1, r2, ... rn}
+for r=1:n
+    rank[ri] = RAND * i;
 
-    sort H for ascending rank value // rank 1 is before rank 2
+sort H for ascending rank value // rank 1 is before rank 2
 ```
 
 Take top k objects as object hypothesis
@@ -81,8 +81,6 @@ The feature vectors are fed into a sequence of fully connected layers leading to
 - softmax probability of object in proposal being any of the K+1 objects (1 being none of the K objects)
 
 - 4 values representing refined bounding-box within the proposal
-
-
 
 ## Citation
 

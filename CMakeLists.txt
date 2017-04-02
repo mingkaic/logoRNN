@@ -38,3 +38,7 @@ add_executable(${PROP_TEST} tools/test_objprop.cpp)
 target_link_libraries(${PROP_TEST} ${OpenCV_LIBS} ${PROP_PROJ})
 
 #========= FAST R-CNN EXECUTABLE =========#
+set(PROP_EXEC opgen)
+include_directories(${LOGO_INCLUDE})
+add_executable(${PROP_EXEC} tools/opgen.cpp)
+target_link_libraries(${PROP_EXEC} ${OpenCV_LIBS} ${PROP_PROJ})
