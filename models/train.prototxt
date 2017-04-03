@@ -1,0 +1,180 @@
+name: "logoRNN"
+
+# data layer needs to be added according to the input we want
+#input: "data"
+#input_dim: 1
+#input_dim: 1
+#input_dim: 256
+#input_dim: 256
+
+## want to make the roi lyaer and raw image in 2 tops and organize it in this file.
+#python layer for data input
+layer {
+  type: "Python"
+  name: "data"
+  top: 'data'
+  top: 'rois'
+  top: 'labels'
+  bottom: "data"
+  python_param {
+    # the module name -- usually the filename that is included in $PYTHONPATH
+    module: "roidata"
+    # the layer name -- the class name in the module.
+    layer: "ROIBlobLayer"
+    param_str: '{"batch_size": 126,"im_shape":256, "crop_size":224, "src_file": "path_to_TRAIN_file.txt"}'
+  }
+}
+
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 0 #learning rate multiplier
+    decay_mult: 0 #weight decay multiplier
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 96   # learn N filters (number of convolutional neurons)
+    kernel_size: 11  # each filter is N x N
+    pad: 5           # size of (zero) padding around borer. Nice feature
+                     # that allows control of the spatial size of the output volumes
+                     # or preserve spatial size of input volume so in/out w & h are same
+    stride: 4        # step N pixels between each filter application
+  }
+}
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3 # pool over a 3x3 region
+    stride: 2      # step two pixels (in the bottom blob) between pooling regions
+    pad: 1
+  }
+}
+# add reLU activations after each con
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "pool1"
+  top: "conv2"
+  param {
+    lr_mult: 0 #learning rate multiplier
+    decay_mult: 0 #weight decay multiplier
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 96   # learn N filters (number of convolutional neurons)
+    kernel_size: 11  # each filter is N x N
+    pad: 5           # size of (zero) padding around borer. Nice feature
+                     # that allows control of the spatial size of the output volumes
+                     # or preserve spatial size of input volume so in/out w & h are same
+    stride: 4        # step N pixels between each filter application
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "conv2"
+  top: "conv3"
+  param {
+    lr_mult: 0 #learning rate multiplier
+    decay_mult: 0 #weight decay multiplier
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 96   # learn N filters (number of convolutional neurons)
+    kernel_size: 11  # each filter is N x N
+    pad: 5           # size of (zero) padding around borer. Nice feature
+                     # that allows control of the spatial size of the output volumes
+                     # or preserve spatial size of input volume so in/out w & h are same
+    stride: 4        # step N pixels between each filter application
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4"
+  param {
+    lr_mult: 0 #learning rate multiplier
+    decay_mult: 0 #weight decay multiplier
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 96   # learn N filters (number of convolutional neurons)
+    kernel_size: 11  # each filter is N x N
+    pad: 5           # size of (zero) padding around borer. Nice feature
+                     # that allows control of the spatial size of the output volumes
+                     # or preserve spatial size of input volume so in/out w & h are same
+    stride: 4        # step N pixels between each filter application
+  }
+}
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "conv4"
+  top: "conv4"
+}
+layer {
+  name: "conv5"
+  type: "Convolution"
+  bottom: "conv4"
+  top: "conv5"
+  param {
+    lr_mult: 0 #learning rate multiplier
+    decay_mult: 0 #weight decay multiplier
+  }
+  param {
+    lr_mult: 0
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 96   # learn N filters (number of convolutional neurons)
+    kernel_size: 11  # each filter is N x N
+    pad: 5           # size of (zero) padding around borer. Nice feature
+                     # that allows control of the spatial size of the output volumes
+                     # or preserve spatial size of input volume so in/out w & h are same
+    stride: 4        # step N pixels between each filter application
+  }
+}
+layer {
+  name: "relu5"
+  type: "ReLU"
+  bottom: "conv5"
+  top: "conv5"
+}
