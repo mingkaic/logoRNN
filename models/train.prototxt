@@ -7,7 +7,7 @@ name: "logoRNN"
 #input_dim: 256
 #input_dim: 256
 
-## want to make the roi lyaer and raw image in 2 tops and organize it in this file.
+## want to make the roi layer and raw image in 2 tops and organize it in this file.
 #python layer for data input
 layer {
   type: "Python"
@@ -21,7 +21,8 @@ layer {
     module: "roidata"
     # the layer name -- the class name in the module.
     layer: "ROIBlobLayer"
-    param_str: '{"batch_size": 126,"im_shape":256, "crop_size":224, "src_file": "path_to_TRAIN_file.txt"}'
+    # param string has to be changed
+    param_str: '{"batch_size": 126,"im_shape":256, "crop_size":224, "src_file": "flickr_logos_27_dataset/flicr_logos_27_dataset_training_set_annotation.txt"}'
   }
 }
 
@@ -65,11 +66,21 @@ layer {
     pad: 1
   }
 }
-# add reLU activations after each con
+layer {
+  name: "norm1"
+  type: "LRN"
+  bottom: "pool1"
+  top: "norm1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
 layer {
   name: "conv2"
   type: "Convolution"
-  bottom: "pool1"
+  bottom: "norm1"
   top: "conv2"
   param {
     lr_mult: 0 #learning rate multiplier
@@ -80,12 +91,12 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 96   # learn N filters (number of convolutional neurons)
-    kernel_size: 11  # each filter is N x N
-    pad: 5           # size of (zero) padding around borer. Nice feature
+    num_output: 256   # learn N filters (number of convolutional neurons)
+    kernel_size: 5  # each filter is N x N
+    pad: 2           # size of (zero) padding around borer. Nice feature
                      # that allows control of the spatial size of the output volumes
                      # or preserve spatial size of input volume so in/out w & h are same
-    stride: 4        # step N pixels between each filter application
+    stride: 1        # step N pixels between each filter application
   }
 }
 layer {
@@ -95,9 +106,32 @@ layer {
   top: "conv2"
 }
 layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3 # pool over a 3x3 region
+    stride: 2      # step two pixels (in the bottom blob) between pooling regions
+    pad: 1
+  }
+}
+layer {
+  name: "norm2"
+  type: "LRN"
+  bottom: "pool2"
+  top: "norm2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
   name: "conv3"
   type: "Convolution"
-  bottom: "conv2"
+  bottom: "norm2"
   top: "conv3"
   param {
     lr_mult: 0 #learning rate multiplier
@@ -108,12 +142,12 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 96   # learn N filters (number of convolutional neurons)
-    kernel_size: 11  # each filter is N x N
-    pad: 5           # size of (zero) padding around borer. Nice feature
+    num_output: 384   # learn N filters (number of convolutional neurons)
+    kernel_size: 3  # each filter is N x N
+    pad: 1           # size of (zero) padding around borer. Nice feature
                      # that allows control of the spatial size of the output volumes
                      # or preserve spatial size of input volume so in/out w & h are same
-    stride: 4        # step N pixels between each filter application
+    stride: 1        # step N pixels between each filter application
   }
 }
 layer {
@@ -136,12 +170,12 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 96   # learn N filters (number of convolutional neurons)
-    kernel_size: 11  # each filter is N x N
-    pad: 5           # size of (zero) padding around borer. Nice feature
+    num_output: 384   # learn N filters (number of convolutional neurons)
+    kernel_size: 3  # each filter is N x N
+    pad: 1           # size of (zero) padding around borer. Nice feature
                      # that allows control of the spatial size of the output volumes
                      # or preserve spatial size of input volume so in/out w & h are same
-    stride: 4        # step N pixels between each filter application
+    stride: 1        # step N pixels between each filter application
   }
 }
 layer {
@@ -164,12 +198,12 @@ layer {
     decay_mult: 0
   }
   convolution_param {
-    num_output: 96   # learn N filters (number of convolutional neurons)
-    kernel_size: 11  # each filter is N x N
-    pad: 5           # size of (zero) padding around borer. Nice feature
+    num_output: 256   # learn N filters (number of convolutional neurons)
+    kernel_size: 3  # each filter is N x N
+    pad: 1           # size of (zero) padding around borer. Nice feature
                      # that allows control of the spatial size of the output volumes
                      # or preserve spatial size of input volume so in/out w & h are same
-    stride: 4        # step N pixels between each filter application
+    stride: 1        # step N pixels between each filter application
   }
 }
 layer {
@@ -178,3 +212,101 @@ layer {
   bottom: "conv5"
   top: "conv5"
 }
+
+#roi pool 5 connects to conv5 and rois from data
+layer {
+  name: "roi_pool5"
+  type: "Pooling"
+  bottom: "conv5"
+  top: "roi_pool5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3 # pool over a 3x3 region
+    stride: 2      # step two pixels (in the bottom blob) between pooling regions
+    pad: 1
+  }
+}
+
+#roi_pool5 gets connected to fc6, fully connected layer_params
+layer {
+  name: "fc6"
+  type: "InnerProduct"
+  # learning rate and decay multipliers for the weights
+  param { lr_mult: 1 decay_mult: 1 }
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 2 decay_mult: 0 }
+  inner_product_param {
+    num_output: 4096
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+  bottom: "roi_pool5"
+
+  top: "fc6"
+}
+layer {
+  name: "relu6"
+  type: "ReLU"
+  bottom: "fc6"
+  top: "fc6"
+}
+layer {
+  name: "drop6"
+  type: "Dropout"
+  bottom: "fc6"
+  top: "fc6"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+
+layer {
+  name: "fc7"
+  type: "InnerProduct"
+  # learning rate and decay multipliers for the weights
+  param { lr_mult: 1 decay_mult: 1 }
+  # learning rate and decay multipliers for the biases
+  param { lr_mult: 2 decay_mult: 0 }
+  inner_product_param {
+    num_output: 4096
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+  bottom: "fc6"
+  top: "fc7"
+}
+
+layer {
+  name: "drop7"
+  type: "Dropout"
+  bottom: "fc7"
+  top: "fc7"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "relu7"
+  type: "ReLU"
+  bottom: "fc7"
+  top: "fc7"
+}
+
+#layer cls_score (Innerproduct) connect from fc7 to cls_score
+#layer bbox_pred (Innerproduct) connect from fc7 to bbox_pred
+
+#layer loss_cls (softmax with loss) connect from cls_score, labls to loss_cls
+#layer loss_bbox (SmoothL2loss) bottom: bbox_pred, bbox_targets, bbox_loss_weights
+# top: loss_bbox
