@@ -121,15 +121,16 @@ std::vector<BOX> propose_objs (const cv::Mat& src,
 		rank++;
 	}
 
-	std::vector<size_t> indices(scores.size());
+	size_t nscores = scores.size();
+	std::vector<size_t> indices(nscores);
 	for (size_t i=0; i < scores.size(); i++) indices[i] = i;
 	std::sort(indices.begin(), indices.end(),
 		[&](size_t x, size_t y) -> bool { return scores[x] < scores[y]; });
 
 	std::vector<BOX> boxes;
-	for (size_t i = 0; i < std::min(indices.size(), min_prop); i++)
+	for (size_t i = 0; i < min_prop && i < indices.size(); i++)
 	{
-		int phantomid = manager.hierarchy[indices[i]];
+		int phantomid = manager.hierarchy[nscores - indices[i] - 1];
 		const lrnn::region_manager::region_info& info = manager.region_collect(phantomid);
 		std::vector<int> subs = info.subregions;
 		// box super region encompassed by subs

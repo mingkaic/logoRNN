@@ -5,6 +5,10 @@ Our project focuses on implementing region based CNN for logo detection
 
 ## Object Proposal Generator
 
+### Dependencies
+
+This project requires OpenCV and Caffe
+
 ### Build
 
 I recommend building in a separate directory
