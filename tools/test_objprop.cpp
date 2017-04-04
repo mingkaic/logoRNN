@@ -21,7 +21,7 @@ const int max_edge = 30;
 
 void segment (int, void*)
 {
-	eparams.sigma = edge * sqrt(2);
+	eparams.sigma = 0.25 * edge * sqrt(2);
 	Mat dest = src.clone();
 	std::vector<lrnn::BOX> bounds = lrnn::propose_objs(src, eparams, min_size, 10);
 	if (bounds.size() == 0)

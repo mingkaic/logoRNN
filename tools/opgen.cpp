@@ -31,7 +31,7 @@ int main (int argc, char** argv )
 	eparams.lo_thres = lohi.first;
 	eparams.hi_thres = lohi.second;
 	eparams.kernel_size = 3;
-	eparams.sigma = 0.5 * sqrt(2); // works for most images
+	eparams.sigma = 0.75 * sqrt(2); // works for most images
 
 	std::vector<lrnn::BOX> bounds = lrnn::propose_objs(src, eparams, min_size, 10);
 	if (bounds.size() == 0)
