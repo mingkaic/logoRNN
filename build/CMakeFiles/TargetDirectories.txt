@@ -1,0 +1,4 @@
+/home/mingkaic/Desktop/logoRNN/build/CMakeFiles/objprop.dir
+/home/mingkaic/Desktop/logoRNN/build/CMakeFiles/opgen.dir
+/home/mingkaic/Desktop/logoRNN/build/CMakeFiles/optest.dir
+/home/mingkaic/Desktop/logoRNN/build/ext/egbis/CMakeFiles/egbis.dir

@@ -6,7 +6,8 @@ ExternalProject_Add(egbis
     GIT_REPOSITORY https://github.com/mingkaic/opencv-wrapper-egbis.git
     CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=ReleaseLibs
     -DCMAKE_CXX_FLAGS=${MSVC_COMPILER_DEFS}
-    PREFIX "${CMAKE_CURRENT_BINARY_DIR}")
+    PREFIX "${CMAKE_CURRENT_BINARY_DIR}"
+    INSTALL_COMMAND "")
 
 # Specify include dir and link libraries
 ExternalProject_Get_Property(egbis source_dir)

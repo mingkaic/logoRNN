@@ -2,6 +2,7 @@
 // Created by Mingkai Chen on 2017-03-27.
 //
 
+#include <cstring>
 #include <opencv2/opencv.hpp>
 
 #ifndef LOGORNN_UTILS_HPP

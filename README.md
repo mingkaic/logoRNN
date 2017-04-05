@@ -27,7 +27,7 @@ Run the generator to get the top right and bottom right corner coordinates
 
 > ./opgen <path/to/image>
 
-The output will return bounding box coordinates. 
+The output will return bounding box coordinates.
 Each line will be 4 numbers separated by commas in the format top left x, top left y, bottom right x, bottom right y.
 
 Running the generator on `tests/imgs/test1.jpg` will yield the following:
@@ -47,10 +47,10 @@ Running the generator on `tests/imgs/test1.jpg` will yield the following:
 
 ## Integration
 
-Modify `train.py`. 
+Modify `train.py`.
 
-It generates 
-1. dictionary mapping each filename to an array of bounding boxes. 
+It generates
+1. dictionary mapping each filename to an array of bounding boxes.
 2. dictionary mapping each filename to its associated label
 
 Do something with these dictionaries (hash maps)
@@ -72,22 +72,3 @@ Without GPU
 
 > ./pythontools/train_net.py --cpu-only --solver models/solver.prototxt \
       --weights data/models/logos.model
-
-## How to Merge
-- git clone https://github.com/mingkaic/logoRNN.git
-- copy over existing files
-- git add .
-- git commit -m "comment"
-- git push origin master
-
-OR
-from your pre-existing project directory
-- git init
-
-set up local authentication if you haven't already
-
-- git remote add origin git@github.com:mingkaic/logoRNN.git
-- git pull origin master
-- git add .
-- git commit -m "comment"
-- git push origin master
