@@ -61,6 +61,18 @@ Example:
 
 > python train.py ./flickr_logos_27_dataset/subset ./flickr_logos_27_dataset_training_set_annotation.txt
 
+## Training
+
+With GPU
+
+> ./pythontools/train_net.py --gpu 0 --solver models/solver.prototxt \
+      --weights data/models/logos.model
+
+Without GPU
+
+> ./pythontools/train_net.py --cpu-only --solver models/solver.prototxt \
+      --weights data/models/logos.model
+
 ## How to Merge
 - git clone https://github.com/mingkaic/logoRNN.git
 - copy over existing files
