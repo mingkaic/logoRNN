@@ -28,11 +28,6 @@ __C = edict()
 cfg = __C
 
 #
-# CPU option
-#
-__C.CPU = False
-
-#
 # Training options
 #
 

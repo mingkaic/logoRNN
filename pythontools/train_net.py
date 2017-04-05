@@ -9,10 +9,7 @@
 
 """Train a Fast R-CNN network on a region of interest database."""
 
-import _init_paths
-from fast_rcnn.train import get_training_roidb, train_net
-from fast_rcnn.config import cfg, cfg_from_file, get_output_dir
-from datasets.factory import get_imdb
+import __builtin__
 import caffe
 import argparse
 import pprint
@@ -47,8 +44,8 @@ def parse_args():
     parser.add_argument('--rand', dest='randomize',
                         help='randomize (do not use a fixed seed)',
                         action='store_true')
-    parser.add_argument('--cpu-only', dest='cpu_option',
-                        help='execute cpy only',
+    parser.add_argument('--cpu-only', dest='cpuonly',
+                        help='execute cpu only mode',
                         action='store_true')
 
     if len(sys.argv) == 1:
@@ -64,6 +61,13 @@ if __name__ == '__main__':
     print('Called with args:')
     print(args)
 
+    __builtin__.cpuonly = args.cpuonly
+
+    import _init_paths
+    from fast_rcnn.config import cfg, cfg_from_file, get_output_dir
+    from fast_rcnn.train import get_training_roidb, train_net
+    from datasets.factory import get_imdb
+
     if args.cfg_file is not None:
         cfg_from_file(args.cfg_file)
 
@@ -76,14 +80,15 @@ if __name__ == '__main__':
         caffe.set_random_seed(cfg.RNG_SEED)
 
     # set up caffe
-    cpuonly = args.cpu_option;
-    if (not cpuonly):
+    if not args.cpuonly:
+        print "setting gpu mode"
         caffe.set_mode_gpu()
         if args.gpu_id is not None:
             caffe.set_device(args.gpu_id)
 
     print args.imdb_name
-    # imdb = get_imdb(args.imdb_name)
+    imdb = get_imdb(args.imdb_name)
+    print imdb
     # print 'Loaded dataset `{:s}` for training'.format(imdb.name)
     # roidb = get_training_roidb(imdb)
     #

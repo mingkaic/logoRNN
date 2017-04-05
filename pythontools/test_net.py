@@ -9,10 +9,6 @@
 
 """Test a Fast R-CNN network on an image database."""
 
-import _init_paths
-from fast_rcnn.test import test_net
-from fast_rcnn.config import cfg, cfg_from_file
-from datasets.factory import get_imdb
 import caffe
 import argparse
 import pprint
@@ -41,6 +37,9 @@ def parse_args():
                         default='voc_2007_test', type=str)
     parser.add_argument('--comp', dest='comp_mode', help='competition mode',
                         action='store_true')
+    parser.add_argument('--cpu-only', dest='cpuonly',
+                        help='execute cpu only mode',
+                        action='store_true')
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -54,6 +53,13 @@ if __name__ == '__main__':
 
     print('Called with args:')
     print(args)
+
+    __builtin__.cpuonly = args.cpuonly
+
+    import _init_paths
+    from fast_rcnn.test import test_net
+    from fast_rcnn.config import cfg, cfg_from_file
+    from datasets.factory import get_imdb
 
     if args.cfg_file is not None:
         cfg_from_file(args.cfg_file)
