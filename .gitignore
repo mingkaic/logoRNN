@@ -32,5 +32,6 @@
 .*
 cmake-build-*
 bin/
+build
 
 !.gitignore

@@ -1,2 +1,0 @@
-/usr/bin/ar cq /home/mingkaic/Desktop/logoRNN/build/ext/egbis/src/egbis/bin/libegbis.a  CMakeFiles/egbis.dir/egbis/src/disjoint-set.cpp.o CMakeFiles/egbis.dir/egbis/src/egbis.cpp.o CMakeFiles/egbis.dir/egbis/src/filter.cpp.o CMakeFiles/egbis.dir/egbis/src/misc.cpp.o CMakeFiles/egbis.dir/egbis/src/segment-graph.cpp.o CMakeFiles/egbis.dir/egbis/src/segment-image.cpp.o
-/usr/bin/ranlib /home/mingkaic/Desktop/logoRNN/build/ext/egbis/src/egbis/bin/libegbis.a

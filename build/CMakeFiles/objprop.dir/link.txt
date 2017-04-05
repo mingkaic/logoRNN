@@ -1,2 +1,0 @@
-/usr/bin/ar cq ../bin/lib/libobjprop.a  CMakeFiles/objprop.dir/proposal/src/proposal.cpp.o CMakeFiles/objprop.dir/proposal/src/segment.cpp.o CMakeFiles/objprop.dir/proposal/src/selectsearch.cpp.o CMakeFiles/objprop.dir/proposal/src/utils.cpp.o
-/usr/bin/ranlib ../bin/lib/libobjprop.a

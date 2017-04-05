@@ -1,3 +1,0 @@
-repository='https://github.com/mingkaic/opencv-wrapper-egbis.git'
-module=''
-tag=''

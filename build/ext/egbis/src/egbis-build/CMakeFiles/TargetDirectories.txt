@@ -1,1 +1,0 @@
-/home/mingkaic/Desktop/logoRNN/build/ext/egbis/src/egbis-build/CMakeFiles/egbis.dir
