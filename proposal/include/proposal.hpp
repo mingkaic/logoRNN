@@ -15,13 +15,22 @@ namespace lrnn {
 
 using BOX = std::pair<cv::Point,cv::Point>;
 
+
+void intermediate (const cv::Mat& src,
+   edge_params eparams,
+   size_t min_size,
+   size_t min_prop,
+   std::vector<double> weights,
+   bool water_prop);
+
 // eparams are a set of parameters for detecting edge (sigma, kernel size, etc), see segment.hpp
 // min_size is the minimum number of pixels for each segment pre-selection search
 // min_prop is the minimum number of proposals outputted.
 std::vector<BOX> propose_objs (const cv::Mat& src,
 	edge_params eparams,
 	size_t min_size,
-	size_t min_prop);
+	size_t min_prop,
+	std::vector<double> weights = {});
 
 }
 

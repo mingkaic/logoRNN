@@ -37,7 +37,13 @@ include_directories(${LOGO_INCLUDE})
 add_executable(${PROP_TEST} tools/test_objprop.cpp)
 target_link_libraries(${PROP_TEST} ${OpenCV_LIBS} ${PROP_PROJ})
 
-#========= FAST R-CNN EXECUTABLE =========#
+#========= OBJECT PROPOSAL TEST VIEW EXECUTABLE =========#
+set(PROP_VIEW viewer)
+include_directories(${LOGO_INCLUDE})
+add_executable(${PROP_VIEW} tools/regionviewer.cpp)
+target_link_libraries(${PROP_VIEW} ${OpenCV_LIBS} ${PROP_PROJ})
+
+#========= BBOX GENERATOR EXECUTABLE =========#
 set(PROP_EXEC opgen)
 include_directories(${LOGO_INCLUDE})
 add_executable(${PROP_EXEC} tools/opgen.cpp)
