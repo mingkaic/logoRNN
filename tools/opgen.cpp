@@ -14,8 +14,9 @@ int main (int argc, char** argv )
 		return -1;
 	}
 
+	std::string fname = argv[1];
 	// Load an image
-	cv::Mat src = cv::imread( argv[1] );
+	cv::Mat src = cv::imread(fname);
 
 	// Check if everything was fine
 	if (!src.data)
@@ -40,7 +41,7 @@ int main (int argc, char** argv )
 	}
 	for (lrnn::BOX b : bounds)
 	{
-		std::cout << b.first.x << "," << b.first.y << "," << b.second.x << "," << b.second.y << std::endl;
+		std::cout << fname << " " << b.first.x << " " << b.first.y << " " << b.second.x << " " << b.second.y << std::endl;
 	}
 
 	return 0;

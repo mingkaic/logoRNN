@@ -30,45 +30,27 @@ Run the generator to get the top right and bottom right corner coordinates
 The output will return bounding box coordinates.
 Each line will be 4 numbers separated by commas in the format top left x, top left y, bottom right x, bottom right y.
 
-Running the generator on `tests/imgs/test1.jpg` will yield the following:
+Running the generator on `./tests/imgs/test1.jpg` will yield the following:
 
 ```
-136,0,293,76
-217,0,499,231
-217,0,499,231
-153,71,354,248
-371,132,499,227
-308,212,499,310
-270,26,383,204
-217,0,499,231
-270,15,412,204
-0,0,499,374
+./tests/imgs/test1.jpg 136 0 293 76
+./tests/imgs/test1.jpg 217 0 499 231
+./tests/imgs/test1.jpg 217 0 499 231
+./tests/imgs/test1.jpg 153 71 354 248
+./tests/imgs/test1.jpg 371 132 499 227
+./tests/imgs/test1.jpg 308 212 499 310
+./tests/imgs/test1.jpg 270 26 383 204
+./tests/imgs/test1.jpg 217 0 499 231
+./tests/imgs/test1.jpg 270 15 412 204
+./tests/imgs/test1.jpg 0 0 499 374
 ```
-
-## Integration
-
-Modify `train.py`.
-
-It generates
-1. dictionary mapping each filename to an array of bounding boxes.
-2. dictionary mapping each filename to its associated label
-
-Do something with these dictionaries (hash maps)
-
-the python script accepts the following argument: path to training img directory, path to labels text file
-
-Example:
-
-> python train.py ./flickr_logos_27_dataset/subset ./flickr_logos_27_dataset_training_set_annotation.txt
 
 ## Training
 
 With GPU
 
-> ./pythontools/train_net.py --gpu 0 --solver models/solver.prototxt \
-      --weights data/models/logos.model
+> ./pythontools/train_net.py --gpu 0 --solver models/solver.prototxt --weights data/models/logos.model
 
 Without GPU
 
-> ./pythontools/train_net.py --cpu-only --solver models/solver.prototxt \
-      --weights data/models/logos.model
+> ./pythontools/train_net.py --cpu-only --solver models/solver.prototxt --weights data/models/logos.model
