@@ -16,6 +16,7 @@ import os
 
 from caffe.proto import caffe_pb2
 import google.protobuf as pb2
+from google.protobuf import text_format
 
 class SolverWrapper(object):
     """A simple wrapper around Caffe's solver.
@@ -41,7 +42,7 @@ class SolverWrapper(object):
 
         self.solver_param = caffe_pb2.SolverParameter()
         with open(solver_prototxt, 'rt') as f:
-            pb2.text_format.Merge(f.read(), self.solver_param)
+            text_format.Merge(f.read(), self.solver_param)
 
         self.solver.net.layers[0].set_roidb(roidb)
 
@@ -100,18 +101,18 @@ class SolverWrapper(object):
         if last_snapshot_iter != self.solver.iter:
             self.snapshot()
 
-# def get_training_roidb(imdb):
-#     """Returns a roidb (Region of Interest database) for use in training."""
-#     if cfg.TRAIN.USE_FLIPPED:
-#         print 'Appending horizontally-flipped training examples...'
-#         imdb.append_flipped_images()
-#         print 'done'
-#
-#     print 'Preparing training data...'
-#     rdl_roidb.prepare_roidb(imdb)
-#     print 'done'
-#
-#     return imdb.roidb
+def get_training_roidb(imdb):
+    """Returns a roidb (Region of Interest database) for use in training."""
+    if cfg.TRAIN.USE_FLIPPED:
+        print 'Appending horizontally-flipped training examples...'
+        imdb.append_flipped_images()
+        print 'done'
+
+    print 'Preparing training data...'
+    rdl_roidb.prepare_roidb(imdb)
+    print 'done'
+
+    return imdb.roidb
 
 def train_net(solver_prototxt, roidb, output_dir,
               pretrained_model=None, max_iters=40000):

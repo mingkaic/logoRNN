@@ -10,13 +10,11 @@
 """Train a Fast R-CNN network on a region of interest database."""
 
 import __builtin__
-import caffe
 import argparse
 import pprint
 import numpy as np
 import sys
 import os
-from roidb import get_training_roidb
 
 cpuonly = False
 
@@ -40,9 +38,6 @@ def parse_args():
     parser.add_argument('--cfg', dest='cfg_file',
                         help='optional config file',
                         default=None, type=str)
-    parser.add_argument('--imdb', dest='imdb_name',
-                        help='dataset to train on',
-                        default='voc_2007_trainval', type=str)
     parser.add_argument('--rand', dest='randomize',
                         help='randomize (do not use a fixed seed)',
                         action='store_true')
@@ -66,9 +61,11 @@ if __name__ == '__main__':
     __builtin__.cpuonly = args.cpuonly
 
     import _init_paths
+    import caffe
     from fast_rcnn.config import cfg, cfg_from_file, get_output_dir
-    from fast_rcnn.train import get_training_roidb, train_net
-    from datasets.factory import get_imdb
+    from fast_rcnn.train import train_net#, get_training_roidb
+    from roidb import get_training_roidb
+    # from datasets.factory import get_imdb
 
     if args.cfg_file is not None:
         cfg_from_file(args.cfg_file)
@@ -88,9 +85,16 @@ if __name__ == '__main__':
         if args.gpu_id is not None:
             caffe.set_device(args.gpu_id)
 
+    # imdb = get_imdb('voc_2007_trainval')
+    # print 'Loaded dataset `{:s}` for training'.format(imdb.name)
+    # roidb = get_training_roidb(imdb)
+    # output_dir = get_output_dir(imdb, None)
+    # print 'Output will be saved to `{:s}`'.format(output_dir)
+
+
     roidb = get_training_roidb()
     output_dir = os.path.join('.', 'data', 'out')
 
-    # train_net(args.solver, roidb, output_dir,
-    #           pretrained_model=args.pretrained_model,
-    #           max_iters=args.max_iters)
+    train_net(args.solver, roidb, output_dir,
+              pretrained_model=args.pretrained_model,
+              max_iters=args.max_iters)
