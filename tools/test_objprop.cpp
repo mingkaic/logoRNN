@@ -15,6 +15,7 @@ lrnn::edge_params eparams;
 const int kernel_size = 3;
 const int min_size = 100;
 const char* window_name = "Edge Map";
+std::vector<double> weights;
 
 int edge = 0;
 const int max_edge = 30;
@@ -23,7 +24,7 @@ void segment (int, void*)
 {
 	eparams.sigma = 0.25 * edge * sqrt(2);
 	Mat dest = src.clone();
-	std::vector<lrnn::BOX> bounds = lrnn::propose_objs(src, eparams, min_size, 10);
+	std::vector<lrnn::BOX> bounds = lrnn::propose_objs(src, eparams, min_size, 10, weights);
 	if (bounds.size() == 0)
 	{
 		bounds.push_back({Point(0, 0), Point(src.cols, src.rows)});
@@ -44,6 +45,18 @@ int main (int argc, char** argv )
 		std::cout << "Usage: optest <image/path>" << std::endl;
 		return -1;
 	}
+	double colorw = 1;
+	double texturew = 1;
+	double sizew = 1;
+	double fillw = 1;
+	if (argc >= 6)
+	{
+		colorw = atof(argv[2]);
+		texturew = atof(argv[3]);
+		sizew = atof(argv[4]);
+		fillw = atof(argv[5]);
+	}
+	weights = {colorw, texturew, sizew, fillw};
 
 	// Load an image
 	src = imread( argv[1] );

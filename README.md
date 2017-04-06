@@ -9,7 +9,7 @@ Our project focuses on implementing region based CNN for logo detection
 
 This project requires OpenCV and Caffe
 
-### Build
+### Build Object Proposal Generator
 
 I recommend building in a separate directory
 
@@ -45,11 +45,15 @@ Running the generator on `./tests/imgs/test1.jpg` will yield the following:
 ./tests/imgs/test1.jpg 0 0 499 374
 ```
 
+# FUTURE PLANS
+
 ## RCNN setup
 
-1. Add folders `trainingset` and `testingset` to `data`
+1. Build opgen
 
-2. run `train_proposals.sh` and `test_proposals.sh` to generate a list of bounding boxes
+2. Add folders `trainingset` and `testingset` to `data`
+
+3. run `train_proposals.sh` and `test_proposals.sh` to generate a list of bounding boxes
 
 ## Training
 

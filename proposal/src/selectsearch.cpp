@@ -288,7 +288,7 @@ int region_manager::region_merge (int regioni, int regionj)
 	else
 	{
 		info->subregions.insert(info->subregions.end(),
-								infoI.subregions.begin(), infoI.subregions.end());
+			infoI.subregions.begin(), infoI.subregions.end());
 	}
 
 	if (infoJ.subregions.empty())
