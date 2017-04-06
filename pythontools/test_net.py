@@ -9,7 +9,7 @@
 
 """Test a Fast R-CNN network on an image database."""
 
-import caffe
+import __builtin__
 import argparse
 import pprint
 import time, os, sys
@@ -32,9 +32,6 @@ def parse_args():
     parser.add_argument('--wait', dest='wait',
                         help='wait until net file exists',
                         default=True, type=bool)
-    parser.add_argument('--imdb', dest='imdb_name',
-                        help='dataset to test',
-                        default='voc_2007_test', type=str)
     parser.add_argument('--comp', dest='comp_mode', help='competition mode',
                         action='store_true')
     parser.add_argument('--cpu-only', dest='cpuonly',
@@ -57,9 +54,9 @@ if __name__ == '__main__':
     __builtin__.cpuonly = args.cpuonly
 
     import _init_paths
+    import caffe
     from fast_rcnn.test import test_net
     from fast_rcnn.config import cfg, cfg_from_file
-    from datasets.factory import get_imdb
 
     if args.cfg_file is not None:
         cfg_from_file(args.cfg_file)
@@ -75,8 +72,5 @@ if __name__ == '__main__':
     caffe.set_device(args.gpu_id)
     net = caffe.Net(args.prototxt, args.caffemodel, caffe.TEST)
     net.name = os.path.splitext(os.path.basename(args.caffemodel))[0]
-
-    imdb = get_imdb(args.imdb_name)
-    imdb.competition_mode(args.comp_mode)
 
     test_net(net, imdb)

@@ -45,6 +45,12 @@ Running the generator on `./tests/imgs/test1.jpg` will yield the following:
 ./tests/imgs/test1.jpg 0 0 499 374
 ```
 
+## RCNN setup
+
+1. Add folders `trainingset` and `testingset` to `data`
+
+2. run `train_proposals.sh` and `test_proposals.sh` to generate a list of bounding boxes
+
 ## Training
 
 With GPU

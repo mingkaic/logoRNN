@@ -15,6 +15,8 @@ import argparse
 import pprint
 import numpy as np
 import sys
+import os
+from roidb import get_training_roidb
 
 cpuonly = False
 
@@ -86,15 +88,9 @@ if __name__ == '__main__':
         if args.gpu_id is not None:
             caffe.set_device(args.gpu_id)
 
-    print args.imdb_name
-    imdb = get_imdb(args.imdb_name)
-    print imdb
-    # print 'Loaded dataset `{:s}` for training'.format(imdb.name)
-    # roidb = get_training_roidb(imdb)
-    #
-    # output_dir = get_output_dir(imdb, None)
-    # print 'Output will be saved to `{:s}`'.format(output_dir)
-    #
+    roidb = get_training_roidb()
+    output_dir = os.path.join('.', 'data', 'out')
+
     # train_net(args.solver, roidb, output_dir,
     #           pretrained_model=args.pretrained_model,
     #           max_iters=args.max_iters)

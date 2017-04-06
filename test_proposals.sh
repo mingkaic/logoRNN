@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-rm testing_bbox.txt
+rm ./data/testing_bbox.txt
 
-for filename in ./data/testset/*; do
+for filename in ./data/testingset/*; do
     echo $filename
-    ./bin/bin/opgen "$filename" >> testing_bbox.txt
+    ./bin/bin/opgen "$filename" >> ./data/testing_bbox.txt
 done

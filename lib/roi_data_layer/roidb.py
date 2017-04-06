@@ -12,6 +12,8 @@ import numpy as np
 from fast_rcnn.config import cfg
 if not cpuonly:
     import utils.cython_bbox
+else:
+    from roi_data_layer.customoverlap import myoverlap
 
 def prepare_roidb(imdb):
     """Enrich the imdb's roidb by adding some derived quantities that
@@ -89,13 +91,15 @@ def _compute_targets(rois, overlaps, labels):
     rois = rois.astype(np.float, copy=False)
 
     # Indices of ground-truth ROIs
-    gt_inds = np.where(overlaps == 1)[0]
+    gt_inds = np.where(overlaps < 0.75)[0]
     # Indices of examples for which we try to make predictions
     ex_inds = np.where(overlaps >= cfg.TRAIN.BBOX_THRESH)[0]
 
     # Get IoU overlap between each ex ROI and gt ROI
-    ex_gt_overlaps = utils.cython_bbox.bbox_overlaps(rois[ex_inds, :],
-                                                     rois[gt_inds, :])
+    if not cpuonly:
+        ex_gt_overlaps = utils.cython_bbox.bbox_overlaps(rois[ex_inds, :], rois[gt_inds, :])
+    else:
+        ex_gt_overlaps = myoverlap(rois[ex_inds, :], rois[gt_inds, :])
 
     # Find which gt ROI each ex ROI has max overlap with:
     # this will be the ex ROI's gt target
