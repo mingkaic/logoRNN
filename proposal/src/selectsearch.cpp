@@ -307,7 +307,7 @@ int region_manager::region_merge (int regioni, int regionj)
 	else
 	{
 		info->subregions.insert(info->subregions.end(),
-								infoJ.subregions.begin(), infoJ.subregions.end());
+			infoJ.subregions.begin(), infoJ.subregions.end());
 	}
 
 	// merge corner info
