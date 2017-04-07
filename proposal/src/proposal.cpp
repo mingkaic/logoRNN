@@ -203,17 +203,19 @@ std::vector<BOX> propose_objs (const cv::Mat& src,
 				manager.region_collect(j);
 
 			double npixels = src.rows * src.cols;
+			double isize = infoI.npixels;
+			double jsize = infoJ.npixels;
 
 			double colorscore = 0;
 			for (int k = 0; k < infoI.color.nbins; k++)
 			{
-				colorscore += std::min(infoI.color.bin[k], infoJ.color.bin[k]);
+				colorscore += std::min(infoI.color.bin[k]/isize, infoJ.color.bin[k]/jsize);
 			}
 
 			double texturescore = 0;
 			for (int k = 0; k < infoI.texture.nbins; k++)
 			{
-				texturescore += std::min(infoI.texture.bin[k], infoJ.texture.bin[k]);
+				texturescore += std::min(infoI.texture.bin[k]/isize, infoJ.texture.bin[k]/jsize);
 			}
 
 			double size_score = 1 - (double) (infoI.npixels + infoJ.npixels) / npixels;
@@ -224,7 +226,7 @@ std::vector<BOX> propose_objs (const cv::Mat& src,
 			int hij = std::max(infoI.lr.second, infoJ.lr.second);
 			int di = hii - loi;
 			int dj = hij - loj;
-			double fill_score = 1 - ((di * dj) - infoI.npixels + infoJ.npixels) / npixels;
+			double fill_score = 1 - ((di * dj) - isize + jsize) / npixels;
 
 			if (weights.size() == 4)
 			{
