@@ -245,20 +245,17 @@ std::vector<BOX> propose_objs (const cv::Mat& src,
 	std::vector<double> scores;
 	std::default_random_engine generator;
 	std::uniform_real_distribution<double> distribution(0.0,1.0);
-	double rank = 1;
-	for (auto rit = manager.hierarchy.rbegin(), ret = manager.hierarchy.rend();
-		rit != ret; rit++)
+	for (size_t i = 0; i < manager.hierarchy.size(); i++)
 	{
-		double score = distribution(generator) * rank;
+		double score = distribution(generator) * i;
 		scores.push_back(score);
-		rank++;
 	}
 
 	size_t nscores = scores.size();
 	std::vector<size_t> indices(nscores);
 	for (size_t i=0; i < scores.size(); i++) indices[i] = i;
 	std::sort(indices.begin(), indices.end(),
-		[&](size_t x, size_t y) -> bool { return scores[x] < scores[y]; });
+		[&](size_t x, size_t y) -> bool { return scores[x] > scores[y]; });
 
 	std::vector<BOX> boxes;
 	for (size_t i = 0; i < min_prop && i < indices.size(); i++)

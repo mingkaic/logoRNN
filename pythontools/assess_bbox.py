@@ -13,14 +13,14 @@ for roi in roidb:
     overlaps = roi['gt_overlaps']
     for coord in np.argwhere(overlaps != 0):
         olap_val = overlaps.toarray()[coord[0]][coord[1]]
-        if olap_val == 1:
+        if olap_val > 0.9:
             correct = correct + 1
         total = total + 1
 for roi in roidb2:
     overlaps = roi['gt_overlaps']
     for coord in np.argwhere(overlaps != 0):
         olap_val = overlaps.toarray()[coord[0]][coord[1]]
-        if olap_val == 1:
+        if olap_val > 0.9:
             correct = correct + 1
         total = total + 1
 print correct
