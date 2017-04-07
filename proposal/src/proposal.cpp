@@ -209,13 +209,13 @@ std::vector<BOX> propose_objs (const cv::Mat& src,
 			double colorscore = 0;
 			for (int k = 0; k < infoI.color.nbins; k++)
 			{
-				colorscore += std::min(infoI.color.bin[k]/isize, infoJ.color.bin[k]/jsize);
+				colorscore += std::min(infoI.color.bin[k], infoJ.color.bin[k]);
 			}
 
 			double texturescore = 0;
 			for (int k = 0; k < infoI.texture.nbins; k++)
 			{
-				texturescore += std::min(infoI.texture.bin[k]/isize, infoJ.texture.bin[k]/jsize);
+				texturescore += std::min(infoI.texture.bin[k], infoJ.texture.bin[k]);
 			}
 
 			double size_score = 1 - (double) (infoI.npixels + infoJ.npixels) / npixels;

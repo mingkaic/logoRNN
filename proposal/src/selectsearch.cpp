@@ -265,6 +265,15 @@ const region_manager::region_info& region_manager::region_collect (int region)
 			}
 		}
 	}
+	// normalize bins
+	for (int k = 0; k < info->texture.nbins; k++)
+	{
+		info->texture.bin[k] /= info->npixels;
+	}
+	for (int k = 0; k < info->color.nbins; k++)
+	{
+		info->color.bin[k] /= info->npixels;
+	}
 	info->ul = {mini, minj};
 	info->lr = {maxi, maxj};
 	cache_[region] = info;
@@ -314,15 +323,15 @@ int region_manager::region_merge (int regioni, int regionj)
 	for (int k = 0; k < info->texture.nbins; k++)
 	{
 		info->texture.bin[k] = (
-									   infoI.npixels * infoI.texture.bin[k] +
-									   infoJ.npixels * infoJ.texture.bin[k]) / tpixels;
+			infoI.npixels * infoI.texture.bin[k] +
+			infoJ.npixels * infoJ.texture.bin[k]) / tpixels;
 	}
 	// merge color info
 	for (int k = 0; k < info->color.nbins; k++)
 	{
 		info->color.bin[k] = (
-									 infoI.npixels * infoI.color.bin[k] +
-									 infoJ.npixels * infoJ.color.bin[k]) / tpixels;
+			infoI.npixels * infoI.color.bin[k] +
+			infoJ.npixels * infoJ.color.bin[k]) / tpixels;
 	}
 	return nMarks;
 }
