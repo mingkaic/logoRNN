@@ -60,7 +60,7 @@ Similar to Opgen, Optest's weight arguments are optional and default to 1.
 
 Run the test to obtain the following window:
 
-![alt tag](https://github.com/mingkaic/logoRNN/doc/optest.jpg)
+![alt tag](https://github.com/mingkaic/logoRNN/blob/master/doc/optestres.jpg)
 
 #### Viewer
 
@@ -68,7 +68,7 @@ Run the test to obtain the following window:
 
 Run the viewer to obtain a set of windows demonstrating each iteration(level) of grouping:
 
-![alt tag](https://github.com/mingkaic/logoRNN/doc/viewer.jpg)
+![alt tag](https://github.com/mingkaic/logoRNN/blob/master/doc/viewer.jpg)
 
 Warning: Viewer may generate a lot of windows for highly segmented images, I recommend using test images instead
 
